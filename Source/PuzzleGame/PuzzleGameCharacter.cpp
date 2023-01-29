@@ -85,3 +85,9 @@ void APuzzleGameCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+
+//TODO
+void APuzzleGameCharacter::Rewind(const FInputActionValue& Value)
+{
+	// RewindObject->GetAll
+}

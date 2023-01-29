@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/TimelineComponent.h"
 #include "RewindObject.generated.h"
 
 UCLASS()
@@ -24,16 +25,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category="Static Mesh")
+	UPROPERTY(EditDefaultsOnly, Category = "StaticMesh")
 	UStaticMeshComponent* StaticMesh;
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
-	TArray<FVector> ActorLocation;
+	TArray<FVector> ActorLocations;
 
 	UPROPERTY(VisibleInstanceOnly)
-	TArray<FRotator> ActorRotation;
+	TArray<FRotator> ActorRotations;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FTransform> ActorTransforms;
+
+	//EditAnywhere for debug reasons
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
 	bool bIsRewinding; 
 
 };
