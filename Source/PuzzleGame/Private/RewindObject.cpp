@@ -19,7 +19,8 @@ void ARewindObject::BeginPlay()
 	Super::BeginPlay();
 	
 	bIsRewinding = false;
-	ActorTransforms.Add(GetActorTransform());
+	InitialPosition = GetActorTransform();
+	ActorTransforms.Add(InitialPosition);
 }
 
 // Called every frame
@@ -34,16 +35,23 @@ void ARewindObject::Tick(float DeltaTime)
 	if(
 		bIsRewinding == false &&
 		ActorTransforms.Num() > 0 &&
-		CurrentLocation != LastValue.GetLocation() &&
-		CurrentRotation != LastValue.GetRotation().Rotator()
+		(CurrentLocation != LastValue.GetLocation() ||
+		CurrentRotation != LastValue.GetRotation().Rotator())
 	)
 	{
 		ActorTransforms.Add(CurrentTransform);
 	}
 
-	if(bIsRewinding == true && ActorTransforms.Num() > 1)
+	if(bIsRewinding == true)
 	{
-		SetActorTransform(LastValue);
-		ActorTransforms.Pop();
+		if(ActorTransforms.Num() > 1)
+		{
+			SetActorTransform(LastValue);
+			ActorTransforms.Pop();
+		}
+		else
+		{
+			SetActorTransform(InitialPosition);
+		}
 	}
 }

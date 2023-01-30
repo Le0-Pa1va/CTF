@@ -41,4 +41,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
 	bool bIsRewinding; 
 
+	UPROPERTY(VisibleAnywhere, Category = "Rewind")
+	FTransform InitialPosition;
+
 };
