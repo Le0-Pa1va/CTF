@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "RewindObject.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "PuzzleGameCharacter.generated.h"
 
 class UInputComponent;
@@ -56,7 +56,7 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
-	void Rewind(const FInputActionValue& Value);
+	void PickUp(const FInputActionValue& Value);
 
 protected:
 	// APawn interface
@@ -67,8 +67,22 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* RewindAction;
+	class UInputAction* PickUpAction;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Collision")
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	float TraceLenght = 200.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PickUp")
+	UPhysicsHandleComponent* PhysicsHandle;
+
+	UPROPERTY(VisibleAnywhere, Category = "PickUp")
+	bool bIsGrabbingObject;
+
+	virtual void Tick(float DeltaTime);
 };
 

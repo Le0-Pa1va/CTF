@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "PickUpObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -22,6 +23,10 @@ APuzzleGameCharacter::APuzzleGameCharacter()
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
+	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+
+	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 void APuzzleGameCharacter::BeginPlay()
@@ -37,7 +42,16 @@ void APuzzleGameCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	bIsGrabbingObject = false;
 
+}
+
+void APuzzleGameCharacter::Tick(float DeltaTime)
+{
+	if(bIsGrabbingObject == true)
+	{
+		PhysicsHandle->SetTargetLocationAndRotation(FirstPersonCameraComponent->GetComponentLocation() + FirstPersonCameraComponent->GetForwardVector() * TraceLenght, FirstPersonCameraComponent->GetComponentRotation());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -56,6 +70,8 @@ void APuzzleGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::Look);
+
+		EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::PickUp);
 	}
 }
 
@@ -86,8 +102,29 @@ void APuzzleGameCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-//TODO
-void APuzzleGameCharacter::Rewind(const FInputActionValue& Value)
+//TODO divide this function into another functions
+void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 {
-	// RewindObject->GetAll
+	
+	FHitResult Hit;
+	FVector TraceStart = FirstPersonCameraComponent->GetComponentLocation();
+	FVector TraceEnd = FirstPersonCameraComponent->GetComponentLocation() + FirstPersonCameraComponent->GetForwardVector() * TraceLenght;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+
+	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, Hit.bBlockingHit ? FColor::Blue : FColor::Red, false, 5.0f, 0, 10.0f);
+	//TODO improve this function
+	if (Hit.bBlockingHit && IsValid(Hit.GetActor()) && Hit.GetActor()->GetClass()->IsChildOf<APickUpObject>() && !bIsGrabbingObject)
+	{
+		PhysicsHandle->GrabComponentAtLocationWithRotation(Hit.GetComponent(), NAME_None, Hit.GetComponent()->GetComponentLocation(), Hit.GetComponent()->GetComponentRotation());
+		bIsGrabbingObject = true;
+	}
+	else if(bIsGrabbingObject)
+	{
+		PhysicsHandle->ReleaseComponent();
+		bIsGrabbingObject = false;
+	}
 }

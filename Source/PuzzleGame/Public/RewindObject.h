@@ -1,14 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Code by Leonardo Paiva 
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Components/TimelineComponent.h"
+#include "../PickUpObject.h"
 #include "RewindObject.generated.h"
 
+/**
+ * 
+ */
+
 UCLASS()
-class PUZZLEGAME_API ARewindObject : public AActor
+class PUZZLEGAME_API ARewindObject : public APickUpObject
 {
 	GENERATED_BODY()
 	
@@ -25,9 +28,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "StaticMesh")
-	UStaticMeshComponent* StaticMesh;
-	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	TArray<FVector> ActorLocations;
 
@@ -43,5 +43,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Rewind")
 	FTransform InitialPosition;
-
 };
