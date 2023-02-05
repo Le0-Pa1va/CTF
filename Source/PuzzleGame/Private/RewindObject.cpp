@@ -33,6 +33,7 @@ void ARewindObject::Tick(float DeltaTime)
 
 	if(bIsRecording == true && ActorTransforms.Num() > 0)
 	{
+		CurrentTransform.SetRotation(FRotator(0.f, 0.f, 0.f).Quaternion());
 		RecordPosition(CurrentTransform);
 	}
 
@@ -54,11 +55,18 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 			bIsRewinding = true;
 			SetActorTransform(PositionLastIndex);
 			ActorTransforms.Pop();
+			if(StaticMesh->IsSimulatingPhysics())
+			{
+				StaticMesh->SetEnableGravity(false);
+				StaticMesh->SetSimulatePhysics(false);
+			}
 		}
 	else
 		{
 			SetActorTransform(InitialPosition);
 			bIsRewinding = false;
 			bStartRewind = false;
+			StaticMesh->SetSimulatePhysics(true);
+			StaticMesh->SetEnableGravity(true);
 		}
 }
