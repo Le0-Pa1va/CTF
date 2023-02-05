@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Public/RewindObject.h"
 #include "PuzzleGameCharacter.generated.h"
 
 class UInputComponent;
@@ -36,7 +37,12 @@ class APuzzleGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* PickUpAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* RewindAction;
+
 public:
 	APuzzleGameCharacter();
 
@@ -58,6 +64,8 @@ protected:
 
 	void PickUp(const FInputActionValue& Value);
 
+	void Rewind(const FInputActionValue& Value);
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -66,9 +74,6 @@ protected:
 public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* PickUpAction;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Collision")
@@ -83,6 +88,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "PickUp")
 	bool bIsGrabbingObject;
 
+	ARewindObject* ObjectToRewind;
+
+protected:
 	virtual void Tick(float DeltaTime);
+
+	UFUNCTION()
+	void CheckGrabbedObject(AActor* GrabbedActor);
 };
 

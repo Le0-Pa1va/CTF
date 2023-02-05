@@ -16,7 +16,8 @@ void ARewindObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	bIsRewinding = false;
+	bIsRecording = false;
+	bStartRewind = false;
 	InitialPosition = GetActorTransform();
 	ActorTransforms.Add(InitialPosition);
 }
@@ -26,30 +27,38 @@ void ARewindObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector CurrentLocation = GetActorLocation();
-	FRotator CurrentRotation = GetActorRotation();
+	//TODO this only needs to be a FVector that gets the location instead of FTransform, so the object will never rotates
 	FTransform CurrentTransform = GetActorTransform();
 	FTransform LastValue = ActorTransforms.Last();
-	if(
-		bIsRewinding == false &&
-		ActorTransforms.Num() > 0 &&
-		(CurrentLocation != LastValue.GetLocation() ||
-		CurrentRotation != LastValue.GetRotation().Rotator())
-	)
+
+	if(bIsRecording == true && ActorTransforms.Num() > 0)
 	{
-		ActorTransforms.Add(CurrentTransform);
+		RecordPosition(CurrentTransform);
 	}
 
-	if(bIsRewinding == true)
+	if(bIsRecording == false && bStartRewind == true)
 	{
-		if(ActorTransforms.Num() > 1)
+		Rewind(LastValue);
+	}
+}
+
+void ARewindObject::RecordPosition(FTransform CurrentActorTransform)
+{
+	ActorTransforms.Add(CurrentActorTransform);
+}
+
+void ARewindObject::Rewind(FTransform PositionLastIndex)
+{
+	if(ActorTransforms.Num() > 1)
 		{
-			SetActorTransform(LastValue);
+			bIsRewinding = true;
+			SetActorTransform(PositionLastIndex);
 			ActorTransforms.Pop();
 		}
-		else
+	else
 		{
 			SetActorTransform(InitialPosition);
+			bIsRewinding = false;
+			bStartRewind = false;
 		}
-	}
 }

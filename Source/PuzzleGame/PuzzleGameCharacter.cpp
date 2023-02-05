@@ -72,6 +72,8 @@ void APuzzleGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::Look);
 
 		EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::PickUp);
+
+		EnhancedInputComponent->BindAction(RewindAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::Rewind);
 	}
 }
 
@@ -121,10 +123,33 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 	{
 		PhysicsHandle->GrabComponentAtLocationWithRotation(Hit.GetComponent(), NAME_None, Hit.GetComponent()->GetComponentLocation(), Hit.GetComponent()->GetComponentRotation());
 		bIsGrabbingObject = true;
+		CheckGrabbedObject(Hit.GetActor());
 	}
 	else if(bIsGrabbingObject)
 	{
 		PhysicsHandle->ReleaseComponent();
 		bIsGrabbingObject = false;
+		
+		if(ObjectToRewind)
+		{
+			ObjectToRewind->SetRecording(false);
+		}
+	}
+}
+
+void APuzzleGameCharacter::Rewind(const FInputActionValue& Value)
+{
+	if(bIsGrabbingObject == false && ObjectToRewind && ObjectToRewind->GetRewinding() == false)
+	{
+		ObjectToRewind->SetRewinding(true);
+	}
+}
+
+void APuzzleGameCharacter::CheckGrabbedObject(AActor* GrabbedActor)
+{
+	ObjectToRewind = Cast<ARewindObject>(GrabbedActor);
+	if(ObjectToRewind && bIsGrabbingObject == true)
+	{
+		ObjectToRewind->SetRecording(true);
 	}
 }

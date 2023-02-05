@@ -41,6 +41,29 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
 	bool bIsRewinding; 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
+	bool bIsRecording;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
+	bool bStartRewind; 
+
 	UPROPERTY(VisibleAnywhere, Category = "Rewind")
 	FTransform InitialPosition;
+
+public:
+	UFUNCTION()
+	void RecordPosition(FTransform CurrentActorTransform);
+
+	UFUNCTION()
+	void Rewind(FTransform PositionLastIndex);
+	
+	UFUNCTION()
+	FORCEINLINE void SetRecording(bool bStartRecord) { bIsRecording = bStartRecord; };
+
+	UFUNCTION()
+	FORCEINLINE void SetRewinding(bool bStartToRewind) { bStartRewind = bStartToRewind; };
+
+	UFUNCTION()
+	FORCEINLINE bool GetRewinding() { return bIsRewinding; };
+
 };
