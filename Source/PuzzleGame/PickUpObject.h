@@ -28,7 +28,4 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Object Properties")
 	UStaticMeshComponent* StaticMesh;
 
-public:
-	UPROPERTY(EditAnywhere, Category="PickUp")
-	bool bIsPickedUp;
 };

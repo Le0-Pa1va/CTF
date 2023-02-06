@@ -28,13 +28,12 @@ void ARewindObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//TODO this only needs to be a FVector that gets the location instead of FTransform, so the object will never rotates
 	FTransform CurrentTransform = GetActorTransform();
 	FTransform LastValue = ActorTransforms.Last();
 
 	if(bIsRecording == true && ActorTransforms.Num() > 0)
 	{
-		CurrentTransform.SetRotation(FRotator(0.f, 0.f, 0.f).Quaternion());
+		// CurrentTransform.SetRotation(FRotator(0.f, 0.f, 0.f).Quaternion());
 		RecordPosition(CurrentTransform);
 	}
 
@@ -78,17 +77,7 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 }
 void ARewindObject::ReleasedObject(FTransform CurrentActorTransform)
 {
-	FHitResult Hit;
-	FVector TraceStart = GetActorLocation();
-	FVector DownwardsVector = FVector(0.f, 0.f, -1.f);
-	FVector TraceEnd = GetActorLocation() + DownwardsVector * TraceLenght;
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
-
-	if(Hit.Distance < 5 && GetVelocity() == FVector(0.f, 0.f, 0.f))
+	if(GetVelocity().Size() <= 3.5f)
 	{
 		SetRecording(false);
 		SetFoundFloor(true);

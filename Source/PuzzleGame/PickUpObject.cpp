@@ -14,7 +14,6 @@ APickUpObject::APickUpObject()
 	StaticMesh->SetSimulatePhysics(true);
 	RootComponent = StaticMesh;
 
-	bIsPickedUp = false;
 }
 
 // Called when the game starts or when spawned
@@ -22,8 +21,6 @@ void APickUpObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// MainCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-	// CharacterCamera = MainCharacter->FindComponentByClass<UCameraComponent>();
 }
 
 // Called every frame

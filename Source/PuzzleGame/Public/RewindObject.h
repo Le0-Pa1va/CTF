@@ -43,12 +43,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Rewind")
 	FTransform InitialPosition;
-
-	UPROPERTY(EditAnywhere, Category = "DownwardsLineTrace")
-	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
-
-	UPROPERTY(EditAnywhere, Category = "DownwardsLineTrace")
-	float TraceLenght = 200.f;
 	
 	UPROPERTY(VisibleAnywhere, Category="FindFloor")
 	bool bFoundFloor;
@@ -71,6 +65,9 @@ public:
 
 	UFUNCTION()
 	FORCEINLINE bool GetRewinding() { return bIsRewinding; };
+
+	UFUNCTION()
+	FORCEINLINE bool GetFoundFloor() { return bFoundFloor; };
 
 	UFUNCTION()
 	FORCEINLINE void SetFoundFloor(bool bFindFloor) { bFoundFloor = bFindFloor; };

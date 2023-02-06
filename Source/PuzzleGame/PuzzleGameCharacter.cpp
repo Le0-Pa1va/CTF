@@ -71,8 +71,10 @@ void APuzzleGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::Look);
 
+		//PickUp
 		EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::PickUp);
 
+		//Rewind
 		EnhancedInputComponent->BindAction(RewindAction, ETriggerEvent::Triggered, this, &APuzzleGameCharacter::Rewind);
 	}
 }
@@ -140,7 +142,12 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 
 void APuzzleGameCharacter::Rewind(const FInputActionValue& Value)
 {
-	if(bIsGrabbingObject == false && ObjectToRewind && ObjectToRewind->GetRewinding() == false)
+	if(
+		bIsGrabbingObject == false &&
+		ObjectToRewind &&
+		ObjectToRewind->GetRewinding() == false &&
+		ObjectToRewind->GetFoundFloor() == true
+	)
 	{
 		ObjectToRewind->SetRewinding(true);
 	}
