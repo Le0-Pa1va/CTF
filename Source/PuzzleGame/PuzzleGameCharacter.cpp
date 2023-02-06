@@ -117,7 +117,6 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
 
-	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, Hit.bBlockingHit ? FColor::Blue : FColor::Red, false, 5.0f, 0, 10.0f);
 	//TODO improve this function
 	if (Hit.bBlockingHit && IsValid(Hit.GetActor()) && Hit.GetActor()->GetClass()->IsChildOf<APickUpObject>() && !bIsGrabbingObject)
 	{
@@ -125,6 +124,7 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 		bIsGrabbingObject = true;
 		CheckGrabbedObject(Hit.GetActor());
 	}
+	
 	else if(bIsGrabbingObject)
 	{
 		PhysicsHandle->ReleaseComponent();
@@ -132,6 +132,7 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 		
 		if(ObjectToRewind)
 		{
+			ObjectToRewind->SetFoundFloor(false);
 			ObjectToRewind->SetRecording(false);
 		}
 	}

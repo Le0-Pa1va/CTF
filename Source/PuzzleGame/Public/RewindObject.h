@@ -28,12 +28,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
-	TArray<FVector> ActorLocations;
-
-	UPROPERTY(VisibleInstanceOnly)
-	TArray<FRotator> ActorRotations;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FTransform> ActorTransforms;
 
@@ -50,12 +44,24 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Rewind")
 	FTransform InitialPosition;
 
+	UPROPERTY(EditAnywhere, Category = "DownwardsLineTrace")
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+
+	UPROPERTY(EditAnywhere, Category = "DownwardsLineTrace")
+	float TraceLenght = 200.f;
+	
+	UPROPERTY(VisibleAnywhere, Category="FindFloor")
+	bool bFoundFloor;
+
 public:
 	UFUNCTION()
 	void RecordPosition(FTransform CurrentActorTransform);
 
 	UFUNCTION()
 	void Rewind(FTransform PositionLastIndex);
+
+	UFUNCTION()
+	void ReleasedObject(FTransform CurrentActorTransform);
 	
 	UFUNCTION()
 	FORCEINLINE void SetRecording(bool bStartRecord) { bIsRecording = bStartRecord; };
@@ -65,5 +71,8 @@ public:
 
 	UFUNCTION()
 	FORCEINLINE bool GetRewinding() { return bIsRewinding; };
+
+	UFUNCTION()
+	FORCEINLINE void SetFoundFloor(bool bFindFloor) { bFoundFloor = bFindFloor; };
 
 };

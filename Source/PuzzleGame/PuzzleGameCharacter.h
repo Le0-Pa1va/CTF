@@ -96,4 +96,3 @@ protected:
 	UFUNCTION()
 	void CheckGrabbedObject(AActor* GrabbedActor);
 };
-

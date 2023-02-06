@@ -20,6 +20,7 @@ void ARewindObject::BeginPlay()
 	bStartRewind = false;
 	InitialPosition = GetActorTransform();
 	ActorTransforms.Add(InitialPosition);
+	SetFoundFloor(true);
 }
 
 // Called every frame
@@ -40,6 +41,11 @@ void ARewindObject::Tick(float DeltaTime)
 	if(bIsRecording == false && bStartRewind == true)
 	{
 		Rewind(LastValue);
+	}
+
+	if(bFoundFloor == false)
+	{
+		ReleasedObject(CurrentTransform);
 	}
 }
 
@@ -69,4 +75,26 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 			StaticMesh->SetSimulatePhysics(true);
 			StaticMesh->SetEnableGravity(true);
 		}
+}
+void ARewindObject::ReleasedObject(FTransform CurrentActorTransform)
+{
+	FHitResult Hit;
+	FVector TraceStart = GetActorLocation();
+	FVector DownwardsVector = FVector(0.f, 0.f, -1.f);
+	FVector TraceEnd = GetActorLocation() + DownwardsVector * TraceLenght;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+
+	if(Hit.Distance < 5 && GetVelocity() == FVector(0.f, 0.f, 0.f))
+	{
+		SetRecording(false);
+		SetFoundFloor(true);
+	}
+	else
+	{
+		RecordPosition(CurrentActorTransform);
+	}
 }
