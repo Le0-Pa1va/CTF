@@ -77,7 +77,7 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 }
 void ARewindObject::ReleasedObject(FTransform CurrentActorTransform)
 {
-	if(GetVelocity().Size() <= 3.5f)
+	if(GetVelocity().Equals(FVector(0.f, 0.f, 0.f), 90.f))
 	{
 		SetRecording(false);
 		SetFoundFloor(true);
