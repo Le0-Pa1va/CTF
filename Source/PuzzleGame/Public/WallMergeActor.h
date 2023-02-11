@@ -7,6 +7,8 @@
 #include "GameFramework/Pawn.h"
 #include "Components/BoxComponent.h"
 #include "Components/DecalComponent.h"
+#include "InputActionValue.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "WallMergeActor.generated.h"
 
 
@@ -14,6 +16,12 @@ UCLASS()
 class PUZZLEGAME_API AWallMergeActor : public APawn
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	class UInputAction* MoveAction;
 
 public:
 	// Sets default values for this pawn's properties
@@ -38,9 +46,13 @@ protected:
 	UDecalComponent* CharacterDecal;
 
 	UPROPERTY(EditAnywhere, Category="MainComponents")
-	USceneComponent* LineTracePoint;
-
-	UPROPERTY(EditAnywhere, Category="MainComponents")
 	UCameraComponent* CharCamera;
+
+	UPROPERTY(EditAnywhere, Category="Movement")
+	UPawnMovementComponent* PawnMovement;
+
+protected:
+	/** Called for movement input */
+	void Move(const FInputActionValue& Value);
 
 };
