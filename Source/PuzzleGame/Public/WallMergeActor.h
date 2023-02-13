@@ -51,6 +51,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Movement")
 	UPawnMovementComponent* PawnMovement;
 
+	UPROPERTY(EditAnywhere, Category = "Collision")
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float TraceLenght = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float TraceDistanceToCenter = 200.f;
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

@@ -64,6 +64,19 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
+
+		FHitResult Hit;
+		TraceDistanceToCenter = TraceDistanceToCenter * MovementVector.X;
+		FVector CurrentLocation = CharCamera->GetComponentLocation();
+		FVector TraceStart = FVector(CurrentLocation.X, CurrentLocation.Y + TraceDistanceToCenter, CurrentLocation.Z);
+		FVector TraceEnd = TraceStart + CharCamera->GetForwardVector() * TraceLenght;
+
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Emerald, true, -1, 0, 10);
+
 	}
 }
 
