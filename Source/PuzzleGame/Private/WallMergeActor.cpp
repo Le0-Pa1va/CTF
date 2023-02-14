@@ -37,13 +37,14 @@ void AWallMergeActor::BeginPlay()
 		}
 	}
 	
+	bIsRotating = false;
+	NewRotationAxis = 0.f;
 }
 
 // Called every frame
 void AWallMergeActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -63,8 +64,6 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
-		AddMovementInput(GetActorRightVector(), MovementVector.X);
-
 		FHitResult Hit;
 		TraceDistanceToCenter = TraceDistanceToCenter * MovementVector.X;
 		FVector CurrentLocation = CharCamera->GetComponentLocation();
@@ -75,8 +74,26 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 		QueryParams.AddIgnoredActor(this);
 
 		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
-		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Emerald, true, -1, 0, 10);
+		// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Emerald, true, -1, 0, 10);
+
+		if(!Hit.bBlockingHit && bIsRotating == false)
+		{
+			//Remember to set UseControllerRotationYaw to true
+			AddControllerYawInput(-MovementVector.X);
+		}
+		else
+		{
+			// adding sideways movement
+			AddMovementInput(GetActorRightVector(), MovementVector.X);
+		}
 
 	}
 }
+
+/*TODO
+investigate why backwards the input does not work very well
+We can try using th set root component in runtime to do the rotation
+Polish movement
+shoot the right and left line traces
+*/
 

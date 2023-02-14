@@ -60,6 +60,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float TraceDistanceToCenter = 200.f;
 
+	// Edit anywhere and bluprint read write for debug reasons
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	bool bIsRotating;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float NewRotationAxis;
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
