@@ -65,35 +65,41 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		FHitResult Hit;
-		TraceDistanceToCenter = TraceDistanceToCenter * MovementVector.X;
 		FVector CurrentLocation = CharCamera->GetComponentLocation();
-		FVector TraceStart = FVector(CurrentLocation.X, CurrentLocation.Y + TraceDistanceToCenter, CurrentLocation.Z);
+		FVector SideVector = GetActorRightVector() * MovementVector.X;
+		FVector TraceStart = CurrentLocation + SideVector * DistanceFromCenter;
 		FVector TraceEnd = TraceStart + CharCamera->GetForwardVector() * TraceLenght;
 
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 
 		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+		
+		FVector Normal = Hit.ImpactNormal;
+		float Dot = FVector::DotProduct(Normal, GetActorForwardVector());
+		float ImpactAngle = FMath::RadiansToDegrees(FMath::Acos(Dot));
 		// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Emerald, true, -1, 0, 10);
 
-		if(!Hit.bBlockingHit && bIsRotating == false)
+		//we can make a function to handle this later
+		if((ImpactAngle == 90.f || ImpactAngle == 180.f) && Hit.bBlockingHit == true)
 		{
+			AddMovementInput(GetActorRightVector(), MovementVector.X);
+		}
+		else
+		{	
 			//Remember to set UseControllerRotationYaw to true
 			AddControllerYawInput(-MovementVector.X);
 		}
-		else
-		{
-			// adding sideways movement
-			AddMovementInput(GetActorRightVector(), MovementVector.X);
-		}
 
 	}
+
 }
 
 /*TODO
-investigate why backwards the input does not work very well
+the movement does not work pretty well when we change the direction after doing a curve
 We can try using th set root component in runtime to do the rotation
 Polish movement
 shoot the right and left line traces
+We can try attach this actor to the actor that is being hit so we can use the floating platforms
 */
 

@@ -58,14 +58,7 @@ protected:
 	float TraceLenght = 200.f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float TraceDistanceToCenter = 200.f;
-
-	// Edit anywhere and bluprint read write for debug reasons
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	bool bIsRotating;
-
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float NewRotationAxis;
+	float DistanceFromCenter = 200.f;
 
 protected:
 	/** Called for movement input */
