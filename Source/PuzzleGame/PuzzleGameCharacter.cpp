@@ -106,7 +106,6 @@ void APuzzleGameCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-//TODO divide this function into another functions
 void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 {
 	
@@ -117,14 +116,26 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
+	// LineTrace
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+	bool bHitSomething = Hit.bBlockingHit;
 
-	//TODO improve this function
-	if (Hit.bBlockingHit && IsValid(Hit.GetActor()) && Hit.GetActor()->GetClass()->IsChildOf<APickUpObject>() && !bIsGrabbingObject)
+	if (Hit.bBlockingHit && !bIsGrabbingObject)
 	{
-		PhysicsHandle->GrabComponentAtLocationWithRotation(Hit.GetComponent(), NAME_None, Hit.GetComponent()->GetComponentLocation(), Hit.GetComponent()->GetComponentRotation());
-		bIsGrabbingObject = true;
-		CheckGrabbedObject(Hit.GetActor());
+		AActor* HitActor = Hit.GetActor();
+		bool bIsValidActor = IsValid(HitActor);
+		bool bPickUpable =  HitActor->GetClass()->IsChildOf<APickUpObject>();
+		
+		if(bIsValidActor == true && bPickUpable == true)
+		{
+			UPrimitiveComponent* HitComponent = Hit.GetComponent();
+			FVector HitComponentLocation = HitComponent->GetComponentLocation();
+			FRotator HitComponentRotation = HitComponent->GetComponentRotation();
+			PhysicsHandle->GrabComponentAtLocationWithRotation(HitComponent, NAME_None, HitComponentLocation, HitComponentRotation);
+
+			bIsGrabbingObject = true;
+			CheckGrabbedObject(HitActor);
+		}
 	}
 	
 	else if(bIsGrabbingObject)

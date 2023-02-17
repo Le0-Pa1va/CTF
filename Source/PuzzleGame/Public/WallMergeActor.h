@@ -60,8 +60,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float DistanceFromCenter = 200.f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	bool bHitOnFront;
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
+
+	UFUNCTION()
+	float GetForwardImpactAngle(float XMovementValue);
 
 };

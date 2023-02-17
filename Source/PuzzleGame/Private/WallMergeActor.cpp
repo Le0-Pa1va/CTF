@@ -29,6 +29,7 @@ void AWallMergeActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	bHitOnFront = true;
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -36,9 +37,6 @@ void AWallMergeActor::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
-	bIsRotating = false;
-	NewRotationAxis = 0.f;
 }
 
 // Called every frame
@@ -64,24 +62,9 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
-		FHitResult Hit;
-		FVector CurrentLocation = CharCamera->GetComponentLocation();
-		FVector SideVector = GetActorRightVector() * MovementVector.X;
-		FVector TraceStart = CurrentLocation + SideVector * DistanceFromCenter;
-		FVector TraceEnd = TraceStart + CharCamera->GetForwardVector() * TraceLenght;
+		float AngleForwardHit = GetForwardImpactAngle(MovementVector.X);
 
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(this);
-
-		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
-		
-		FVector Normal = Hit.ImpactNormal;
-		float Dot = FVector::DotProduct(Normal, GetActorForwardVector());
-		float ImpactAngle = FMath::RadiansToDegrees(FMath::Acos(Dot));
-		// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Emerald, true, -1, 0, 10);
-
-		//we can make a function to handle this later
-		if((ImpactAngle == 90.f || ImpactAngle == 180.f) && Hit.bBlockingHit == true)
+		if((AngleForwardHit == 90.f || AngleForwardHit == 180.f) && bHitOnFront == true)
 		{
 			AddMovementInput(GetActorRightVector(), MovementVector.X);
 		}
@@ -95,8 +78,36 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 
 }
 
+float AWallMergeActor::GetForwardImpactAngle(float XMovementValue)
+{
+		FHitResult Hit;
+		FVector CurrentLocation = CharCamera->GetComponentLocation();
+		FVector SideVector = GetActorRightVector() * XMovementValue;
+		FVector TraceStart = CurrentLocation + SideVector * DistanceFromCenter;
+		FVector TraceEnd = TraceStart + CharCamera->GetForwardVector() * TraceLenght;
+
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+
+		if(Hit.bBlockingHit == true)
+		{
+			bHitOnFront = true;
+		}
+		else
+		{
+			bHitOnFront = false;
+		}
+		
+		FVector Normal = Hit.ImpactNormal;
+		float Dot = FVector::DotProduct(Normal, GetActorForwardVector());
+		float ImpactAngle = FMath::RadiansToDegrees(FMath::Acos(Dot));
+
+		return ImpactAngle;
+}
+
 /*TODO
-the movement does not work pretty well when we change the direction after doing a curve
 We can try using th set root component in runtime to do the rotation
 Polish movement
 shoot the right and left line traces
