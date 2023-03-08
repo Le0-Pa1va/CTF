@@ -39,23 +39,29 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category="MainComponents")
-	UBoxComponent* BoxCollision;
-
-	UPROPERTY(EditAnywhere, Category="MainComponents")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MainComponents")
 	UDecalComponent* CharacterDecal;
 
-	UPROPERTY(EditAnywhere, Category="MainComponents")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MainComponents")
 	UCameraComponent* CharCamera;
+
+	UPROPERTY(EditAnywhere, Category="MainComponents")
+	USceneComponent* ActorCenter;
+
+	UPROPERTY(EditAnywhere, Category="MainComponents")
+	USceneComponent* PivotPoint;
 
 	UPROPERTY(EditAnywhere, Category="Movement")
 	UPawnMovementComponent* PawnMovement;
 
-	UPROPERTY(EditAnywhere, Category = "Collision")
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float TraceLenght = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float SidewayTraceLenght = 200.f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float DistanceFromCenter = 200.f;
@@ -63,11 +69,38 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	bool bHitOnFront;
 
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	bool bHitOnSideways;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	float YawOnCorner;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	bool bIsRotatingConcave;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	bool bIsRotatingConvex;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	bool bIsMoving;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	float InitialDistance;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	float CurrentDistance;
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	UFUNCTION()
 	float GetForwardImpactAngle(float XMovementValue);
+
+	UFUNCTION()
+	void GetSidewaysImpact(float XMovementValue);
+
+	UFUNCTION()
+	void SetPivotPoint(USceneComponent* NewPivotPoint);
 
 };

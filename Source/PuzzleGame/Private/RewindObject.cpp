@@ -33,7 +33,6 @@ void ARewindObject::Tick(float DeltaTime)
 
 	if(bIsRecording == true && ActorTransforms.Num() > 0)
 	{
-		// CurrentTransform.SetRotation(FRotator(0.f, 0.f, 0.f).Quaternion());
 		RecordPosition(CurrentTransform);
 	}
 
@@ -77,6 +76,7 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 }
 void ARewindObject::ReleasedObject(FTransform CurrentActorTransform)
 {
+	//90.f is the tolerance
 	if(GetVelocity().Equals(FVector(0.f, 0.f, 0.f), 90.f))
 	{
 		SetRecording(false);
