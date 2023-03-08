@@ -50,7 +50,6 @@ void AWallMergeActor::BeginPlay()
 
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
 
-	UE_LOG(LogTemp, Error, TEXT("AAAAA---------------------------------------------"));
 	if(Hit.bBlockingHit == true)
 	{
 		InitialDistance = FVector::Distance(Hit.ImpactPoint, TraceStart);
@@ -83,8 +82,6 @@ void AWallMergeActor::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AWallMergeActor::Move(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("------------------------------------"));
-	UE_LOG(LogTemp, Warning, TEXT("entrou"));
 	FString CurrentTime = FDateTime::Now().ToString();
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -92,21 +89,18 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 	{
 		float AngleForwardHit = GetForwardImpactAngle(MovementVector.X);
 		GetSidewaysImpact(MovementVector.X);
-
-		UE_LOG(LogTemp, Warning, TEXT("AngleForwardHit %f"), AngleForwardHit);
-		UE_LOG(LogTemp, Warning, TEXT("YawOnCorner %f"), YawOnCorner);
-		UE_LOG(LogTemp, Error, TEXT("bHitOnFront %s"), bHitOnFront ? "t" : "f");
-		UE_LOG(LogTemp, Error, TEXT("bHitOnSideways %s"), bHitOnSideways ? "t" : "f");
-		UE_LOG(LogTemp, Warning, TEXT("bIsRotatingConcave %s"), bIsRotatingConcave ? "t" : "f");
 		if((AngleForwardHit == 90.f || AngleForwardHit == 180.f) && bHitOnFront == true && bHitOnSideways == false)
 		{
-			bIsRotatingConcave = false;
-			bIsRotatingConvex = false;
+			YawOnCorner = 0.f;
+			if(bIsRotatingConcave == true)
+			{
+				bIsRotatingConcave = false;
+			}
+			else if(bIsRotatingConvex == true)
+			{
+				bIsRotatingConvex = false;
+			}
 			AddMovementInput(GetActorRightVector(), MovementVector.X);
-			/*TODO
-			The problem is in the distance, so we have to debug this next part and improve the logic*/
-			UE_LOG(LogTemp, Warning, TEXT("BBBBBBBBBBBBBBBBBBBBBBBB"));
-    		UE_LOG(LogTemp, Log, TEXT("The current time is: %s"), *CurrentTime)
 			if(int32(CurrentDistance) < int32(InitialDistance))
 			{
 				AddMovementInput(GetActorForwardVector(), -1);
@@ -114,7 +108,6 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 		}
 		else if((bHitOnSideways == true || YawOnCorner != 0.f) && bIsRotatingConvex == false)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AngleForwardHitAAAAAAAAA"));
 			bIsRotatingConcave = true;
 			
 			if(GetRootComponent() != CharCamera)
@@ -129,14 +122,6 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 					bIsRotatingConcave = false;
 					YawOnCorner = 0.f;
 				}
-				// TODO nunca vai cair aqui. Arrumar!!!!!!! 
-				else if((AngleForwardHit == 90.f || AngleForwardHit == 180.f) && bHitOnFront == true && bHitOnSideways == false)
-				{
-					bIsRotatingConcave = false;
-					bIsRotatingConvex = false;
-					AddControllerYawInput(MovementVector.X);
-					YawOnCorner = 0.1;
-				}
 				else
 				{
 					AddControllerYawInput(MovementVector.X);
@@ -146,7 +131,6 @@ void AWallMergeActor::Move(const FInputActionValue& Value)
 		}
 		else if(bIsRotatingConcave == false)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AQUI"));
 			if(GetRootComponent() != CharacterDecal)
 			{
 				SetPivotPoint(CharacterDecal);
