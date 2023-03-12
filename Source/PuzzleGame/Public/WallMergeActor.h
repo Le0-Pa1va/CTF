@@ -48,9 +48,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category="MainComponents")
 	USceneComponent* ActorCenter;
 
-	UPROPERTY(EditAnywhere, Category="MainComponents")
-	USceneComponent* PivotPoint;
-
 	UPROPERTY(EditAnywhere, Category="Movement")
 	UPawnMovementComponent* PawnMovement;
 
@@ -82,9 +79,6 @@ protected:
 	bool bIsRotatingConvex;
 
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
-	bool bIsMoving;
-
-	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	float InitialDistance;
 
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
@@ -101,6 +95,8 @@ protected:
 	void GetSidewaysImpact(float XMovementValue);
 
 	UFUNCTION()
-	void SetPivotPoint(USceneComponent* NewPivotPoint);
+	void MovementOnTheWall(float XMovementValue, float AngleForwardHit);
 
+	UFUNCTION()
+	void SetPivotPoint(USceneComponent* NewPivotPoint);
 };

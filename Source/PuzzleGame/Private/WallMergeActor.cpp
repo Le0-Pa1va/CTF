@@ -15,14 +15,12 @@ AWallMergeActor::AWallMergeActor()
 	CharacterDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
 	CharCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	PawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovComp"));
-	
-	// CharCamera->SetRelativeLocation(FVector(-450.f, 0.f, 60.f)); // Position the camera
+
 	RootComponent = ActorCenter;
 	CharCamera->SetupAttachment(RootComponent);
 	CharacterDecal->SetupAttachment(RootComponent);
 
 	// Remember to set the decal size on the blueprint (i think the  size (300, 30, 30) should work)
-	// the position in the tests that works fine is (X=1890.000000,Y=790.000000,Z=100.000000)
 }
 
 // Called when the game starts or when spawned
@@ -62,11 +60,6 @@ void AWallMergeActor::BeginPlay()
 void AWallMergeActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// if(int32(SidewayTraceLenght) < int32(InitialDistance))
-	// {
-	// 	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y - (InitialDistance - CurrentDistance), GetActorLocation().Z));
-	// }
 }
 
 // Called to bind functionality to input
@@ -82,67 +75,14 @@ void AWallMergeActor::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AWallMergeActor::Move(const FInputActionValue& Value)
 {
-	FString CurrentTime = FDateTime::Now().ToString();
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
 		float AngleForwardHit = GetForwardImpactAngle(MovementVector.X);
 		GetSidewaysImpact(MovementVector.X);
-		if((AngleForwardHit == 90.f || AngleForwardHit == 180.f) && bHitOnFront == true && bHitOnSideways == false)
-		{
-			YawOnCorner = 0.f;
-			if(bIsRotatingConcave == true)
-			{
-				bIsRotatingConcave = false;
-			}
-			else if(bIsRotatingConvex == true)
-			{
-				bIsRotatingConvex = false;
-			}
-			AddMovementInput(GetActorRightVector(), MovementVector.X);
-			if(int32(CurrentDistance) < int32(InitialDistance))
-			{
-				AddMovementInput(GetActorForwardVector(), -1);
-			}
-		}
-		else if((bHitOnSideways == true || YawOnCorner != 0.f) && bIsRotatingConvex == false)
-		{
-			bIsRotatingConcave = true;
-			
-			if(GetRootComponent() != CharCamera)
-			{
-				SetPivotPoint(CharCamera);
-			}
-			else
-			{
-				// AddMovementInput(GetActorRightVector(), MovementVector.X);
-				if(FMath::Abs(YawOnCorner) == 90.f || FMath::Abs(YawOnCorner) == 180.f)
-				{
-					bIsRotatingConcave = false;
-					YawOnCorner = 0.f;
-				}
-				else
-				{
-					AddControllerYawInput(MovementVector.X);
-					YawOnCorner = GetActorRotation().Yaw;
-				}
-			}
-		}
-		else if(bIsRotatingConcave == false)
-		{
-			if(GetRootComponent() != CharacterDecal)
-			{
-				SetPivotPoint(CharacterDecal);
-			}
-			else
-			{
-				bIsRotatingConvex = true;
-				//Remember to set UseControllerRotationYaw to true
-				AddControllerYawInput(-MovementVector.X);
-			}
-		}
 
+		MovementOnTheWall(MovementVector.X, AngleForwardHit);
 	}
 
 }
@@ -227,4 +167,64 @@ void AWallMergeActor::SetPivotPoint(USceneComponent* NewPivotPoint)
 		CharCamera->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	}
 	ActorCenter->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+}
+
+void AWallMergeActor::MovementOnTheWall(float XMovementValue, float AngleForwardHit)
+{
+	if((AngleForwardHit == 90.f || AngleForwardHit == 180.f) && bHitOnFront == true && bHitOnSideways == false)
+		{
+			YawOnCorner = 0.f;
+			if(bIsRotatingConcave == true)
+			{
+				bIsRotatingConcave = false;
+			}
+			else if(bIsRotatingConvex == true)
+			{
+				bIsRotatingConvex = false;
+			}
+
+			AddMovementInput(GetActorRightVector(), XMovementValue);
+
+			if(CurrentDistance < InitialDistance)
+			{
+				AddMovementInput(GetActorForwardVector(), -1);
+			}
+		}
+
+		else if((bHitOnSideways == true || YawOnCorner != 0.f) && bIsRotatingConvex == false)
+		{
+			bIsRotatingConcave = true;
+			
+			if(GetRootComponent() != CharCamera)
+			{
+				SetPivotPoint(CharCamera);
+			}
+			else
+			{
+				if(FMath::Abs(YawOnCorner) == 90.f || FMath::Abs(YawOnCorner) == 180.f)
+				{
+					bIsRotatingConcave = false;
+					YawOnCorner = 0.f;
+				}
+				else
+				{
+					AddControllerYawInput(XMovementValue);
+					YawOnCorner = GetActorRotation().Yaw;
+				}
+			}
+		}
+
+		else if(bIsRotatingConcave == false)
+		{
+			if(GetRootComponent() != CharacterDecal)
+			{
+				SetPivotPoint(CharacterDecal);
+			}
+			else
+			{
+				bIsRotatingConvex = true;
+				//Remember to set UseControllerRotationYaw to true
+				AddControllerYawInput(-XMovementValue);
+			}
+		}
 }
