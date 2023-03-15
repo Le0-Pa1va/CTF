@@ -4,6 +4,7 @@
 #include "WallMergeActor.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FloatingActor.h"
 
 // Sets default values
 AWallMergeActor::AWallMergeActor()
@@ -108,6 +109,18 @@ float AWallMergeActor::GetForwardImpactAngle(float XMovementValue)
 				SidewayTraceLenght = FVector::Distance(Hit.ImpactPoint, TraceStart);
 			}
 			bHitOnFront = true;
+
+			if (Hit.GetActor())
+			{
+				// Get the name of the actor
+				FString ActorName = Hit.GetActor()->GetClass()->GetName();
+
+				if(Hit.GetActor()->IsA<AFloatingActor>())
+				{
+					FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
+					this->AttachToActor(Hit.GetActor(), AttachmentRules);
+				}
+			}
 		}
 		else
 		{
