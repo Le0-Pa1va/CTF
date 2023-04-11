@@ -1,4 +1,4 @@
-// Code by Leonardo Paiva 
+// Code by Leonardo Paiva
 
 #pragma once
 
@@ -10,8 +10,8 @@ UCLASS()
 class PUZZLEGAME_API ARotatingLevelSection : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ARotatingLevelSection();
 
@@ -19,17 +19,33 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category="MainComponents")
-	UStaticMeshComponent* SectionMesh;
+	UPROPERTY(EditAnywhere, Category = "MainComponents")
+	UStaticMeshComponent *SectionMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="SectionMovement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SectionMovement")
 	bool bShouldRotate;
 
-	UPROPERTY(EditAnywhere, Category="SectionMovement")
-	float SectionRotationRate = -90.f;
+	UPROPERTY(EditAnywhere, Category = "SectionMovement")
+	FRotator StartRotation;
+
+	UPROPERTY(EditAnywhere, Category = "SectionMovement")
+	FRotator TargetRotation = FRotator(0.f, 90.f, 0.f);
+
+	UPROPERTY(EditAnywhere, Category = "SectionMovement")
+	float LerpAlpha = 0.f;
+
+	UPROPERTY(EditAnywhere, Category = "SectionMovement")
+	float LerpVelocity = 10.f; // adjust this value to control the velocity of the lerp
+
+	UPROPERTY(VisibleAnywhere, Category = "SectionMovement")
+	bool bReverseRotation = false;
+
+protected:
+	UFUNCTION()
+	void RotateSection(float DeltaSeconds);
 };
