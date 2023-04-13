@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "PickUpObject.h"
+#include "Public/RotateSectionButton.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -136,6 +137,10 @@ void APuzzleGameCharacter::PickUp(const FInputActionValue& Value)
 			bIsGrabbingObject = true;
 			CheckGrabbedObject(HitActor);
 		}
+		else
+		{
+			CheckGrabbedObject(HitActor);
+		}
 	}
 	
 	else if(bIsGrabbingObject)
@@ -171,4 +176,11 @@ void APuzzleGameCharacter::CheckGrabbedObject(AActor* GrabbedActor)
 	{
 		ObjectToRewind->SetRecording(true);
 	}
+
+	ARotateSectionButton* RotateSectionButton = Cast<ARotateSectionButton>(GrabbedActor);
+	if(RotateSectionButton)
+	{
+		RotateSectionButton->PressButton();
+	}
+
 }

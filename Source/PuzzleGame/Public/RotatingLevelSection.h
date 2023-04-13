@@ -48,4 +48,11 @@ protected:
 protected:
 	UFUNCTION()
 	void RotateSection(float DeltaSeconds);
+	
+public:
+	UFUNCTION()
+	FORCEINLINE bool GetShouldRotate() { return bShouldRotate; }
+	
+	UFUNCTION()
+	FORCEINLINE void SetShouldRotate(bool bShouldRotateSection) { bShouldRotate = bShouldRotateSection; }
 };
