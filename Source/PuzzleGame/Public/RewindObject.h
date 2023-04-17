@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../PickUpObject.h"
+#include "RotatingLevelSection.h"
 #include "RewindObject.generated.h"
 
 /**
@@ -46,6 +47,12 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, Category="FindFloor")
 	bool bFoundFloor;
+
+	UPROPERTY(EditInstanceOnly, Category = "LevelSectionInstance")
+	ARotatingLevelSection* LevelSectionInstance;
+
+	UPROPERTY(VisibleAnywhere, Category = "Rewind")
+	FTransform CurrentTransform;
 
 public:
 	UFUNCTION()

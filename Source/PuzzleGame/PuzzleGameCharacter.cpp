@@ -171,10 +171,13 @@ void APuzzleGameCharacter::Rewind(const FInputActionValue& Value)
 
 void APuzzleGameCharacter::CheckGrabbedObject(AActor* GrabbedActor)
 {
-	ObjectToRewind = Cast<ARewindObject>(GrabbedActor);
-	if(ObjectToRewind && bIsGrabbingObject == true)
+	if(!ObjectToRewind)
 	{
-		ObjectToRewind->SetRecording(true);
+		ObjectToRewind = Cast<ARewindObject>(GrabbedActor);
+		if(ObjectToRewind && bIsGrabbingObject == true)
+		{
+			ObjectToRewind->SetRecording(true);
+		}
 	}
 
 	ARotateSectionButton* RotateSectionButton = Cast<ARotateSectionButton>(GrabbedActor);
