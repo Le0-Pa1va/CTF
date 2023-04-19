@@ -24,17 +24,26 @@ void ARewindObject::BeginPlay()
 	SetFoundFloor(true);
 
 	if (LevelSectionInstance)
-	{
-		FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
-		
-		AttachToActor(LevelSectionInstance, AttachmentRules);
+	{	
+		SetAttachmentToSection();
 	}
+
+	bShouldDetach = false;
 }
 
 // Called every frame
 void ARewindObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if(GetAttachParentActor() && bShouldDetach)
+	{
+		SetDettachmentToSection();
+		SetSimulatePhysicsRewind(true);
+	}
+	else if(!GetAttachParentActor() && !bShouldDetach && LevelSectionInstance)
+	{
+		SetAttachmentToSection();
+	}
 
 	if(LevelSectionInstance)
 	{
@@ -46,8 +55,8 @@ void ARewindObject::Tick(float DeltaTime)
 	{
 		CurrentTransform = GetActorTransform();
 	}
-	FTransform LastValue = ActorTransforms.Last();
 
+	const FTransform LastValue = ActorTransforms.Last();
 	if(bIsRecording == true && ActorTransforms.Num() > 0)
 	{
 		RecordPosition(CurrentTransform);
@@ -76,6 +85,7 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 		bIsRewinding = true;
 		if (LevelSectionInstance)
 		{
+			SetDettachmentToSection();
 			/* TODO:
 			- Lerp the actor to the original position
 			- Lerp the actor to the star position
@@ -95,7 +105,7 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 		if (StaticMesh->IsSimulatingPhysics())
 		{
 			StaticMesh->SetEnableGravity(false);
-			StaticMesh->SetSimulatePhysics(false);
+			SetSimulatePhysicsRewind(false);
 		}
 	}
 	else
@@ -103,13 +113,16 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 		SetActorTransform(InitialPosition);
 		bIsRewinding = false;
 		bStartRewind = false;
-		StaticMesh->SetSimulatePhysics(true);
+		SetSimulatePhysicsRewind(true);
+		// this will have a parameter to tell if should enable gravity or not because the child class should not
 		StaticMesh->SetEnableGravity(true);
 	}
 }
 
 void ARewindObject::ReleasedObject(FTransform CurrentActorTransform)
 {
+	//needs a if here
+	SetShouldDetach(false);
 	//90.f is the tolerance
 	if(GetVelocity().Equals(FVector(0.f, 0.f, 0.f), 90.f))
 	{
@@ -120,4 +133,20 @@ void ARewindObject::ReleasedObject(FTransform CurrentActorTransform)
 	{
 		RecordPosition(CurrentActorTransform);
 	}
+}
+
+void ARewindObject::SetAttachmentToSection()
+{
+	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+	AttachToActor(LevelSectionInstance, AttachmentRules);
+}
+
+void ARewindObject::SetDettachmentToSection()
+{
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+}
+
+void ARewindObject::SetSimulatePhysicsRewind(bool bShouldSimulate)
+{
+	StaticMesh->SetSimulatePhysics(bShouldSimulate);
 }

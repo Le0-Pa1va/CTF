@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "../PickUpObject.h"
 #include "RotatingLevelSection.h"
+#include "Engine/EngineTypes.h"
 #include "RewindObject.generated.h"
 
 /**
@@ -54,6 +55,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Rewind")
 	FTransform CurrentTransform;
 
+	UPROPERTY(EditAnywhere, Category = "LevelSectionInstance")
+	bool bShouldDetach;
+
 public:
 	UFUNCTION()
 	void RecordPosition(FTransform CurrentActorTransform);
@@ -78,5 +82,18 @@ public:
 
 	UFUNCTION()
 	FORCEINLINE void SetFoundFloor(bool bFindFloor) { bFoundFloor = bFindFloor; };
+
+	UFUNCTION()
+	FORCEINLINE void SetShouldDetach(bool bDetach) { bShouldDetach = bDetach; };
+
+	UFUNCTION()
+	void SetSimulatePhysicsRewind(bool bShouldSimulate);
+
+public:
+	UFUNCTION()
+	void SetAttachmentToSection();
+
+	UFUNCTION()
+	void SetDettachmentToSection();
 
 };
