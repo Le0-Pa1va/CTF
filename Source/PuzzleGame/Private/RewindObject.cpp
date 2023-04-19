@@ -89,7 +89,6 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 			/* TODO:
 			- Lerp the actor to the original position
 			- Lerp the actor to the star position
-			- fix actor falling of the ground
 			- test using just the location instead of transform
 			*/
 			FTransform SectionWorldTransform = LevelSectionInstance->GetActorTransform();
