@@ -171,22 +171,18 @@ void APuzzleGameCharacter::Rewind(const FInputActionValue& Value)
 
 void APuzzleGameCharacter::CheckGrabbedObject(AActor* GrabbedActor)
 {
-	// O problema tá aqui. provavelmente o segundo cast quando é feito limpa o primeiro cast
-	// if(!ObjectToRewind)
-	// {
-	// 	ObjectToRewind = Cast<ARewindObject>(GrabbedActor);
-	// }
+	ARotateSectionButton* RotateSectionButton = Cast<ARotateSectionButton>(GrabbedActor);
+	if(RotateSectionButton)
+	{
+		RotateSectionButton->PressButton();
+		return;
+	}
+	
+	//this should be always the last one because we can't lose the reference
 	ObjectToRewind = Cast<ARewindObject>(GrabbedActor);
 	if(ObjectToRewind && bIsGrabbingObject == true)
 	{
 		ObjectToRewind->SetShouldDetach(true);
 		ObjectToRewind->SetRecording(true);
 	}
-
-	ARotateSectionButton* RotateSectionButton = Cast<ARotateSectionButton>(GrabbedActor);
-	if(RotateSectionButton)
-	{
-		RotateSectionButton->PressButton();
-	}
-
 }
