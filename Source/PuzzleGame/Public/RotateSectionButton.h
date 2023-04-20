@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditInstanceOnly, Category = "LevelSectionInstance")
 	ARotatingLevelSection* LevelSectionInstnace;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* PressButtonSound;
+
 public:
 	UFUNCTION()
 	void PressButton();

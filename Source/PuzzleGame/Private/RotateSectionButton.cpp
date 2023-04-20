@@ -2,6 +2,7 @@
 
 
 #include "RotateSectionButton.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARotateSectionButton::ARotateSectionButton()
@@ -10,6 +11,7 @@ ARotateSectionButton::ARotateSectionButton()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ButtonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ButtonMesh"));
+	PressButtonSound = CreateDefaultSubobject<USoundBase>(TEXT("PressButtonSound"));
 
 }
 
@@ -29,6 +31,11 @@ void ARotateSectionButton::Tick(float DeltaTime)
 
 void ARotateSectionButton::PressButton()
 {
+	if(PressButtonSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), PressButtonSound,  GetActorLocation());
+	}
+	
 	if(LevelSectionInstnace && !LevelSectionInstnace->GetShouldRotate())
 	{
 		LevelSectionInstnace->SetShouldRotate(true);
