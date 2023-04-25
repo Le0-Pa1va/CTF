@@ -109,11 +109,13 @@ void ARewindObject::Rewind(FTransform PositionLastIndex)
 	}
 	else
 	{
-		SetActorTransform(InitialPosition);
+		if(!LevelSectionInstance)
+		{
+			SetActorTransform(InitialPosition);
+		}
 		bIsRewinding = false;
 		bStartRewind = false;
 		SetSimulatePhysicsRewind(true);
-		// this will have a parameter to tell if should enable gravity or not because the child class should not
 		StaticMesh->SetEnableGravity(true);
 	}
 }
