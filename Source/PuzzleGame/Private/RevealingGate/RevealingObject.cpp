@@ -26,6 +26,7 @@ void ARevealingObject::BeginPlay()
 
 		DynMaterial->SetVectorParameterValue("Pole1", FLinearColor(FirstPoleLocation.X, FirstPoleLocation.Y, FirstPoleLocation.Z, 1.f));
 		DynMaterial->SetVectorParameterValue("Pole2", FLinearColor(SecondPoleLocation.X, SecondPoleLocation.Y, SecondPoleLocation.Z, 1.f));
+		DynMaterial->SetScalarParameterValue("ShowDefault", ShouldStartShowingScalar);
 
 		ObjectMesh->SetMaterial(0.f, DynMaterial);
 	}

@@ -33,4 +33,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Materials")
 	UMaterialInterface* MaskingMaterialInstance;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MainComponents")
+	float ShouldStartShowingScalar;
 };
