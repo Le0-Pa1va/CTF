@@ -26,15 +26,35 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="MainComponents")
 	UStaticMeshComponent* ObjectMesh;
-private:
 
+protected:
 	UPROPERTY(EditAnywhere, Category="Poles")
 	ARevealingGate* RevealingGate;
 
 	UPROPERTY(EditAnywhere, Category="Materials")
 	UMaterialInterface* MaskingMaterialInstance;
 
+	UPROPERTY(VisibleAnywhere, Category="Materials")
+	UMaterialInstanceDynamic* DynMaterial;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MainComponents")
 	float ShouldStartShowingScalar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MainComponents")
+	float OpacityAfterCollision;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category="Collision")
+	ACharacter* MainCharacter;
+
+	UPROPERTY(VisibleAnywhere, Category="Collision")
+	bool bCollidedGate;
+
+private:
+	UFUNCTION()
+	void SetCollision(float Opacity);
+
+	UFUNCTION()
+	void SetDynMaterialParam(FName ParamName, float ParamValue);
 };

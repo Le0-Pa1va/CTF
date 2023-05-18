@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/BoxComponent.h"
+#include "../../PuzzleGameCharacter.h"
 #include "RevealingGate.generated.h"
 
 UCLASS()
@@ -33,7 +35,41 @@ private:
 	UPROPERTY(EditAnywhere, Category="MainComponents")
 	USceneComponent* GateRoot;
 
+	UPROPERTY(VisibleAnywhere, Category="MainComponents")
+	bool bCollidedCharacter;
+
+	UPROPERTY(VisibleAnywhere, Category="Collision")
+	bool bIsInFront;
+
+	UPROPERTY(VisibleAnywhere, Category="Collision")
+	bool bBackwardsCollision;
+
+protected:
+	UPROPERTY(EditAnywhere, Category="MainComponents")
+	UBoxComponent* BoxCollision;
+
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	TArray<FVector> GetPolesLocations();
+
+	UFUNCTION()
+	FORCEINLINE bool GetCollidedCharater() { return bCollidedCharacter; };
+
+	UFUNCTION()
+	FORCEINLINE void SetCollidedCharater(bool bShouldRestoreCollision) { bCollidedCharacter = bShouldRestoreCollision; };
+
+	UFUNCTION()
+	FORCEINLINE bool GetIsInFront() { return bIsInFront; };
+
+	UFUNCTION()
+	FORCEINLINE bool GetBackwardsCollision() { return bBackwardsCollision; };
+
+	UFUNCTION()
+	FORCEINLINE void SetIsInFront(bool InFront) { bIsInFront = InFront; };
 };

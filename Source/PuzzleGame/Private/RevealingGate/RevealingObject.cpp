@@ -2,6 +2,7 @@
 
 
 #include "RevealingGate/RevealingObject.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARevealingObject::ARevealingObject()
@@ -20,15 +21,18 @@ void ARevealingObject::BeginPlay()
 	
 	if(MaskingMaterialInstance && RevealingGate)
 	{
-		UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(MaskingMaterialInstance, this);
+		OpacityAfterCollision = ShouldStartShowingScalar;
+		bCollidedGate = false;
+		DynMaterial = UMaterialInstanceDynamic::Create(MaskingMaterialInstance, this);
 		FVector FirstPoleLocation = RevealingGate->GetPolesLocations()[0];
 		FVector SecondPoleLocation = RevealingGate->GetPolesLocations()[1];
 
 		DynMaterial->SetVectorParameterValue("Pole1", FLinearColor(FirstPoleLocation.X, FirstPoleLocation.Y, FirstPoleLocation.Z, 1.f));
 		DynMaterial->SetVectorParameterValue("Pole2", FLinearColor(SecondPoleLocation.X, SecondPoleLocation.Y, SecondPoleLocation.Z, 1.f));
-		DynMaterial->SetScalarParameterValue("ShowDefault", ShouldStartShowingScalar);
-
+		SetDynMaterialParam("ShowDefault", ShouldStartShowingScalar);
+		SetDynMaterialParam("AfterCollision", 3.f);
 		ObjectMesh->SetMaterial(0.f, DynMaterial);
+		MainCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	}
 }
 
@@ -37,5 +41,63 @@ void ARevealingObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(RevealingGate && MainCharacter)
+	{
+		FVector RelativeLocation = MainCharacter->GetActorLocation() - RevealingGate->GetActorLocation();
+		RevealingGate->SetIsInFront(RelativeLocation.Y > 0.f);
+		
+		if(RevealingGate->GetIsInFront())
+		{
+			if(RevealingGate->GetCollidedCharater())
+			{
+				SetDynMaterialParam("AfterCollision", OpacityAfterCollision);
+				ShouldStartShowingScalar = !OpacityAfterCollision;
+				bCollidedGate = true;
+			}
+			else
+			{
+				SetDynMaterialParam("AfterCollision", 3.f);
+				if(bCollidedGate && !RevealingGate->GetBackwardsCollision())
+				{
+					SetDynMaterialParam("ShowDefault", ShouldStartShowingScalar);
+					OpacityAfterCollision = ShouldStartShowingScalar;
+				}
+				else
+				{
+					SetDynMaterialParam("ShowDefault", OpacityAfterCollision);
+				}
+				bCollidedGate = false;
+			}
+		}
+		else
+		{
+			if(bCollidedGate)
+			{
+				SetDynMaterialParam("AfterCollision", OpacityAfterCollision);
+				SetCollision(OpacityAfterCollision);
+			}
+			else
+			{
+				SetDynMaterialParam("AfterCollision", !OpacityAfterCollision);
+				SetCollision(!OpacityAfterCollision);
+			}
+		}
+	}
 }
 
+void ARevealingObject::SetCollision(float Opacity)
+{
+	if(Opacity == 1)
+	{
+		ObjectMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	}
+	else
+	{
+		ObjectMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	}
+}
+
+void ARevealingObject::SetDynMaterialParam(FName ParamName, float ParamValue)
+{
+	DynMaterial->SetScalarParameterValue(ParamName, ParamValue);
+}
