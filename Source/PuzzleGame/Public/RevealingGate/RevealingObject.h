@@ -57,4 +57,7 @@ private:
 
 	UFUNCTION()
 	void SetDynMaterialParam(FName ParamName, float ParamValue);
+
+	UFUNCTION()
+	void HandlePlayerGatePassing();
 };

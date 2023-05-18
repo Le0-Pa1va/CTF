@@ -68,8 +68,14 @@ public:
 	FORCEINLINE bool GetIsInFront() { return bIsInFront; };
 
 	UFUNCTION()
+	FORCEINLINE void SetIsInFront(bool InFront) { bIsInFront = InFront; };
+	
+	UFUNCTION()
 	FORCEINLINE bool GetBackwardsCollision() { return bBackwardsCollision; };
 
 	UFUNCTION()
-	FORCEINLINE void SetIsInFront(bool InFront) { bIsInFront = InFront; };
+	FORCEINLINE void SetBackwardsCollision(bool bBackwards) { bBackwardsCollision = bBackwards; };
+
+	UFUNCTION()
+	void SetBoxCollisionResponse(bool bShouldBlock);
 };

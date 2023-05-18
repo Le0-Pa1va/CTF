@@ -71,3 +71,15 @@ void ARevealingGate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* O
 	}
 }
 
+void ARevealingGate::SetBoxCollisionResponse(bool bShouldBlock)
+{
+	if(bShouldBlock)
+	{
+		BoxCollision->SetCollisionProfileName("BlockAll");
+	}
+	else
+	{
+		BoxCollision->SetCollisionProfileName("OverlapAll");
+	}
+}
+

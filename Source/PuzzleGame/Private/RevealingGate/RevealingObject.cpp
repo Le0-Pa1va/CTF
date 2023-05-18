@@ -41,6 +41,12 @@ void ARevealingObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	HandlePlayerGatePassing();
+}
+
+
+void ARevealingObject::HandlePlayerGatePassing()
+{
 	if(RevealingGate && MainCharacter)
 	{
 		FVector RelativeLocation = MainCharacter->GetActorLocation() - RevealingGate->GetActorLocation();
@@ -48,6 +54,7 @@ void ARevealingObject::Tick(float DeltaTime)
 		
 		if(RevealingGate->GetIsInFront())
 		{
+			RevealingGate->SetBoxCollisionResponse(false);
 			if(RevealingGate->GetCollidedCharater())
 			{
 				SetDynMaterialParam("AfterCollision", OpacityAfterCollision);
@@ -57,29 +64,39 @@ void ARevealingObject::Tick(float DeltaTime)
 			else
 			{
 				SetDynMaterialParam("AfterCollision", 3.f);
+
 				if(bCollidedGate && !RevealingGate->GetBackwardsCollision())
 				{
 					SetDynMaterialParam("ShowDefault", ShouldStartShowingScalar);
 					OpacityAfterCollision = ShouldStartShowingScalar;
 				}
-				else
+				else //if(bCollidedGate && RevealingGate->GetBackwardsCollision())
 				{
 					SetDynMaterialParam("ShowDefault", OpacityAfterCollision);
 				}
+				// else if(!bCollidedGate && RevealingGate->GetBackwardsCollision())
+				// {
+				// 	// SetDynMaterialParam("AfterCollision", OpacityAfterCollision);
+				// 	ShouldStartShowingScalar = !ShouldStartShowingScalar;
+				// 	OpacityAfterCollision = !OpacityAfterCollision;
+				// }
 				bCollidedGate = false;
 			}
 		}
+
 		else
 		{
 			if(bCollidedGate)
 			{
 				SetDynMaterialParam("AfterCollision", OpacityAfterCollision);
 				SetCollision(OpacityAfterCollision);
+				RevealingGate->SetBoxCollisionResponse(false);
 			}
-			else
+			else //if(!RevealingGate->GetBackwardsCollision())
 			{
 				SetDynMaterialParam("AfterCollision", !OpacityAfterCollision);
 				SetCollision(!OpacityAfterCollision);
+				RevealingGate->SetBoxCollisionResponse(true);
 			}
 		}
 	}
