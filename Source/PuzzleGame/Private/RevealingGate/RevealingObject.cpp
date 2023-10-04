@@ -70,16 +70,10 @@ void ARevealingObject::HandlePlayerGatePassing()
 					SetDynMaterialParam("ShowDefault", ShouldStartShowingScalar);
 					OpacityAfterCollision = ShouldStartShowingScalar;
 				}
-				else //if(bCollidedGate && RevealingGate->GetBackwardsCollision())
+				else
 				{
 					SetDynMaterialParam("ShowDefault", OpacityAfterCollision);
 				}
-				// else if(!bCollidedGate && RevealingGate->GetBackwardsCollision())
-				// {
-				// 	// SetDynMaterialParam("AfterCollision", OpacityAfterCollision);
-				// 	ShouldStartShowingScalar = !ShouldStartShowingScalar;
-				// 	OpacityAfterCollision = !OpacityAfterCollision;
-				// }
 				bCollidedGate = false;
 			}
 		}
@@ -92,7 +86,7 @@ void ARevealingObject::HandlePlayerGatePassing()
 				SetCollision(OpacityAfterCollision);
 				RevealingGate->SetBoxCollisionResponse(false);
 			}
-			else //if(!RevealingGate->GetBackwardsCollision())
+			else
 			{
 				SetDynMaterialParam("AfterCollision", !OpacityAfterCollision);
 				SetCollision(!OpacityAfterCollision);
