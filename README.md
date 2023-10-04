@@ -1,9 +1,12 @@
-Here are a couple of cool game mechanics from other games that I reproduced in this project
+# Game Mechanics Reproduction Project 🎮
 
+In this project, I've recreated some cool game mechanics inspired by other games. Take a look at the comparisons below:
 
+| My Version                                        | Inspiration                                        |
+| ------------------------------------------------- | --------------------------------------------------- |
+| ![Rewind](https://github.com/Le0-Pa1va/GifsCTF/blob/main/Rewind.gif)            | ![Lis (Life is Strange)](https://github.com/Le0-Pa1va/GifsCTF/blob/main/References/Lis.gif)          |
+| ![Revealing Gate](https://github.com/Le0-Pa1va/GifsCTF/blob/main/RevealingGate.gif) | ![Hellblade](https://github.com/Le0-Pa1va/GifsCTF/blob/main/References/Hellblade.gif)          |
+| ![Wall Merge](https://github.com/Le0-Pa1va/GifsCTF/blob/main/WallMerge.gif)        | ![Zelda](https://github.com/Le0-Pa1va/GifsCTF/blob/main/References/Zelda.gif)          |
 
-My Version           |  Inspirarion 
-:-------------------------:|:-------------------------:
-![](https://github.com/Le0-Pa1va/GifsCTF/blob/main/Rewind.gif)  |  ![](https://github.com/Le0-Pa1va/GifsCTF/blob/main/References/Lis.gif)
-![](https://github.com/Le0-Pa1va/GifsCTF/blob/main/RevealingGate.gif)  |  ![](https://github.com/Le0-Pa1va/GifsCTF/blob/main/References/Hellblade.gif)
-![](https://github.com/Le0-Pa1va/GifsCTF/blob/main/WallMerge.gif)  |  ![](https://github.com/Le0-Pa1va/GifsCTF/blob/main/References/Zelda.gif)
+Each GIF represents diligent work to capture the essence of the original games. Feel free to explore and experience these mechanics in the project!
+
